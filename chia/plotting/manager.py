@@ -113,6 +113,10 @@ class Cache:
         return self._path
 
 
+def is_remote(filename: str) -> bool:
+    return filename.find("--remoteplot--") != -1
+
+
 class PlotManager:
     plots: Dict[Path, PlotInfo]
     plot_filename_paths: Dict[str, Tuple[str, Set[str]]]
@@ -294,15 +298,17 @@ class PlotManager:
                 expected_size = _expected_plot_size(prover.get_size()) * UI_ACTUAL_SPACE_CONSTANT_FACTOR
                 stat_info = file_path.stat()
 
-                # TODO: consider checking if the file was just written to (which would mean that the file is still
-                # being copied). A segfault might happen in this edge case.
 
-                if prover.get_size() >= 30 and stat_info.st_size < 0.98 * expected_size:
-                    log.warning(
-                        f"Not farming plot {file_path}. Size is {stat_info.st_size / (1024**3)} GiB, but expected"
-                        f" at least: {expected_size / (1024 ** 3)} GiB. We assume the file is being copied."
-                    )
-                    return None
+                if not is_remote(str(file_path)):
+                    # TODO: consider checking if the file was just written to (which would mean that the file is still
+                    # being copied). A segfault might happen in this edge case.
+
+                    if prover.get_size() >= 30 and stat_info.st_size < 0.98 * expected_size:
+                        log.warning(
+                            f"Not farming plot {file_path}. Size is {stat_info.st_size / (1024**3)} GiB, but expected"
+                            f" at least: {expected_size / (1024 ** 3)} GiB. We assume the file is being copied."
+                        )
+                        return None
 
                 cache_entry = self.cache.get(prover.get_id())
                 if cache_entry is None:
