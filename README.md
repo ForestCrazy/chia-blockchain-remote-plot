@@ -4,7 +4,7 @@ This client fork (no changes to the protocol, runs on Chia mainnet) allows a far
 Intended use case is when one has a (preferably) free, unused cloud storage subscription and want to use it to farm some XCH instead of leaving it empty.
 This also needs the associated chiapos library with modified DiskProver class code found here [chiapos remote farming mod](https://github.com/GLise710/chiapos)
 
-# chia-blockchain
+# chia-blockchain (original description)
 
 ![Alt text](https://www.chia.net/img/chia_logo.svg)
 
